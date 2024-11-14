@@ -6,11 +6,6 @@
  * Email: motamarp@oregonstate.edu
  */
 
-/*
- * Name: Paolo Mota Marques
- * Email: motamarp@oregonstate.edu
- */
-
 // DOM Elements
 const sellButton = document.getElementById("sell-something-button");
 const modalBackdrop = document.getElementById("modal-backdrop");
