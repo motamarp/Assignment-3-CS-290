@@ -6,7 +6,7 @@
  * Email: motamarp@oregonstate.edu
  */
 
-// DOM Elements
+// DOM Elements -- constants
 const sellButton = document.getElementById("sell-something-button");
 const modalBackdrop = document.getElementById("modal-backdrop");
 const sellModal = document.getElementById("sell-something-modal");
@@ -16,21 +16,21 @@ const modalAccept = document.getElementById("modal-accept");
 const filterButton = document.getElementById("filter-update-button");
 const postsContainer = document.getElementById("posts");
 
-// Form Inputs
+// Form Inputs -- basically the fields in the post creation
 const postTextInput = document.getElementById("post-text-input");
 const postPhotoInput = document.getElementById("post-photo-input");
 const postPriceInput = document.getElementById("post-price-input");
 const postCityInput = document.getElementById("post-city-input");
 const postConditionInputs = document.getElementsByName("post-condition");
 
-// Filter Inputs
+// Filter Inputs -- used to match filtered selection with the shown items 
 const filterTextInput = document.getElementById("filter-text");
 const filterMinPriceInput = document.getElementById("filter-min-price");
 const filterMaxPriceInput = document.getElementById("filter-max-price");
 const filterCitySelect = document.getElementById("filter-city");
 const filterConditionInputs = document.querySelectorAll("#filter-condition input");
 
-// Helper function to create a new post element
+// Creates a new post element -- with the following info
 function createPostElement(description, photoURL, price, city, condition) {
   const post = document.createElement("div");
   post.classList.add("post");
@@ -38,6 +38,7 @@ function createPostElement(description, photoURL, price, city, condition) {
   post.setAttribute("data-city", city);
   post.setAttribute("data-condition", condition);
 
+// Post formatting -- personal note: the back-tick is a template indicator
   post.innerHTML = `
     <div class="post-contents">
       <div class="post-image-container">
@@ -51,13 +52,13 @@ function createPostElement(description, photoURL, price, city, condition) {
   return post;
 }
 
-// Show Modal
+// Show Modal -- makes the form pop up
 sellButton.addEventListener("click", () => {
   modalBackdrop.classList.remove("hidden");
   sellModal.classList.remove("hidden");
 });
 
-// Close Modal (Cancel or Close Button)
+// Close Modal (cancel/close button)
 function closeModal() {
   modalBackdrop.classList.add("hidden");
   sellModal.classList.add("hidden");
@@ -67,7 +68,7 @@ function closeModal() {
 modalClose.addEventListener("click", closeModal);
 modalCancel.addEventListener("click", closeModal);
 
-// Clear Modal Fields
+// Clear Modal Fields -- resets the inputs when opening again
 function clearModalFields() {
   postTextInput.value = "";
   postPhotoInput.value = "";
@@ -76,7 +77,7 @@ function clearModalFields() {
   postConditionInputs.forEach(input => input.checked = false); // Reset radio buttons
 }
 
-// Create Post (Accept Button)
+// Create Post -- checks if all fields are valid before posting after hitting "Accept"
 modalAccept.addEventListener("click", () => {
   const description = postTextInput.value.trim();
   const photoURL = postPhotoInput.value.trim();
@@ -84,17 +85,17 @@ modalAccept.addEventListener("click", () => {
   const city = postCityInput.value.trim();
   const condition = [...postConditionInputs].find(input => input.checked)?.value;
 
-  // Validate the input fields
+  // Validating portion
   if (!description || !photoURL || !price || !city || !condition) {
     alert("Please fill in all fields.");
-    return; // Don't create the post if any field is missing
+    return; // Doesn't create the post if a field is missing (or if invalid input)
   }
 
-  // Create the post and append it to the DOM
+  // Create the post & append it -- adds post to the page
   const newPost = createPostElement(description, photoURL, price, city, condition);
   postsContainer.appendChild(newPost);
 
-  // Check if the city is new and add it to the filter dropdown
+  // Checks if the city is new -- and if it is, it adds it to the selection choices
   if (![...filterCitySelect.options].some(option => option.value.toLowerCase() === city.toLowerCase())) {
     const newCityOption = document.createElement("option");
     newCityOption.textContent = city;
@@ -102,20 +103,20 @@ modalAccept.addEventListener("click", () => {
     filterCitySelect.appendChild(newCityOption);
   }
 
-  closeModal(); // Close the modal after creating the post
+  closeModal(); // Closes the modal after post creation
 });
 
-// Apply Filters
+// Filters -- makes sure that the selected filters are applied
 filterButton.addEventListener("click", () => {
   const filterText = filterTextInput.value.trim().toLowerCase();
-  const filterMinPrice = parseFloat(filterMinPriceInput.value.trim()) || 0;
-  const filterMaxPrice = parseFloat(filterMaxPriceInput.value.trim()) || Infinity;
-  const filterCity = filterCitySelect.value.toLowerCase();
+  const filterMinPrice = parseFloat(filterMinPriceInput.value.trim()) || 0; // Lowest possible price 
+  const filterMaxPrice = parseFloat(filterMaxPriceInput.value.trim()) || Infinity; // For when there's no maximum price set
+  const filterCity = filterCitySelect.value.toLowerCase(); // Selected city name becomes lowercase (removes case sensitivity for filtering) 
   const selectedConditions = [...filterConditionInputs]
     .filter(input => input.checked)
     .map(input => input.value);
 
-  const posts = [...postsContainer.getElementsByClassName("post")];
+  const posts = [...postsContainer.getElementsByClassName("post")]; // Gathers all posts on page into array (easier to filter)
 
   posts.forEach(post => {
     const description = post.querySelector(".post-title").textContent.toLowerCase();
